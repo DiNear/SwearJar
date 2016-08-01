@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -34,19 +35,22 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private static final String TAG = "SignInActivity";
     private static final int RC_SIGN_IN = 9001;
 
-    private Button signOutButton;
     private GoogleApiClient mGoogleApiClient;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+
+    private TextView mHelpText;
+    private FloatingActionButton mAddGameBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        // Change as necessary
-        toolbar.setTitle("Swear Jar");
         setSupportActionBar(toolbar);
+
+        mHelpText = (TextView) findViewById(R.id.help_text);
+        mAddGameBtn = (FloatingActionButton) findViewById(R.id.new_game);
 
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
@@ -71,44 +75,25 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 if (user != null) {
                     // User is signed in
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+
+                    mHelpText.setText(R.string.select_or_add_new_game);
                 } else {
                     // User is signed out
                     Log.d(TAG, "onAuthStateChanged:signed_out");
+
+                    mHelpText.setText(R.string.please_login_to_use_app);
                 }
                 // ...
             }
         };
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.new_game);
-        fab.setOnClickListener(new View.OnClickListener() {
+        mAddGameBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -138,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         mAuth.addAuthStateListener(mAuthListener);
 
         if (mAuth.getCurrentUser() == null) {
-            signIn();
+//            signIn();
         }
     }
 
@@ -188,6 +173,38 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                         }
                     }
                 });
+    }
+
+    /*
+     * The following methods are required an auto-generated
+     */
+
+    // Disables the OptionsMenu button (3 dots) for the RHS of the toolbar
+    @Override
+    public boolean onPrepareOptionsMenu (Menu menu) {
+        return false;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

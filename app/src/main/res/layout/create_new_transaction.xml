@@ -58,6 +58,7 @@
 
         <EditText
             android:id="@+id/new_game_name"
+            android:hint="Test Hint"
             android:layout_marginEnd="20dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

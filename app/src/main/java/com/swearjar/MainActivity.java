@@ -1,17 +1,22 @@
 package com.swearjar;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,12 +39,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     private static final String TAG = "SignInActivity";
     private static final int RC_SIGN_IN = 9001;
+    private static final int DEFAULT_SWEAR_COST_IND = 2;
+    private static final int[] SWEAR_COST_ARRAY = {5, 10, 25, 50, 100, 200};
 
     private GoogleApiClient mGoogleApiClient;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
     private TextView mHelpText;
+    private ListView mGameList;
     private FloatingActionButton mAddGameBtn;
 
     @Override
@@ -50,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         setSupportActionBar(toolbar);
 
         mHelpText = (TextView) findViewById(R.id.help_text);
+        mGameList = (ListView) findViewById(R.id.game_list);
         mAddGameBtn = (FloatingActionButton) findViewById(R.id.new_game);
 
         // Configure sign-in to request the user's ID, email address, and basic
@@ -90,8 +99,40 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         mAddGameBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                LayoutInflater inflater = LayoutInflater.from(MainActivity.this);
+
+                final View newGameView = inflater.inflate(R.layout.create_new_game, null);
+
+                final Spinner mSwearCostSpinner = (Spinner) newGameView.findViewById(R.id.swear_cost_spinner);
+                // Create an ArrayAdapter using the string array and a default spinner layout
+                ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(MainActivity.this,
+                        R.array.swear_cost_array, android.R.layout.simple_spinner_item);
+                // Specify the layout to use when the list of choices appears
+                // TODO: Customize Spinner drop down item to match colour scheme
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                // Apply the adapter to the spinner
+                mSwearCostSpinner.setAdapter(adapter);
+                // Set default selection to the spinner
+                mSwearCostSpinner.setSelection(DEFAULT_SWEAR_COST_IND, true);
+
+                // TODO: Possibly add list of swear words which apply to the game being created
+
+                final EditText mGameName = (EditText) newGameView.findViewById(R.id.new_game_name);
+
+                AlertDialog dialog = new AlertDialog.Builder(MainActivity.this, R.style.SignInDialogTheme)
+                        .setTitle(R.string.create_new_game)
+                        .setView(newGameView)
+                        .setPositiveButton("Create", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                Log.d(TAG, mGameName.getText().toString());
+                                Log.d(TAG, mSwearCostSpinner.getSelectedItem().toString());
+                                Log.d(TAG, SWEAR_COST_ARRAY[mSwearCostSpinner.getSelectedItemPosition()] + "");
+                                //mSomeVariableYouHaveOnYourActivity = etName.getText().toString();
+                            }
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .create();
+                dialog.show();
             }
         });
     }

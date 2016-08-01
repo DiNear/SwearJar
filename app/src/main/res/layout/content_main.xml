@@ -21,8 +21,8 @@
         android:textStyle="bold"
         android:text="@string/please_login_to_use_app"/>
 
-    <GridView
-        android:id="@+id/game_grid"
+    <ListView
+        android:id="@+id/game_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/help_text" />
